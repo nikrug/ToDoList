@@ -33,7 +33,7 @@ const ToDoItem: React.FC<ToDoItemProps> = ({ todo, onToggle, onDelete, onFavorit
         {todo.text}
       </span>
       <button onClick={handleDelete}>Delete</button>
-      <button onClick={handleFavoriteToggle}>{todo.favorite ? 'Favorite' : 'Unfovarite'}</button>
+      <button onClick={handleFavoriteToggle}>{todo.favorite ? 'Favorite' : 'Unfavorite'}</button>
     </div>
   );
 };

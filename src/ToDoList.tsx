@@ -1,4 +1,3 @@
-// ToDoList.tsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ToDoItem from './ToDoItem';
@@ -7,45 +6,26 @@ const CenteredContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
- position: fixed;
+  position: fixed;
   top: 0;
   width: 100%;
   background: #ffffff;
   padding: 10px;
   margin-top: -10px;
   width: 200vh;
-  height: 100vh; /* Высота контейнера */
-  overflow: auto; /* Включаем прокрутку */
-  
+  height: 100vh;
+  overflow: auto;
 `;
 
-
 const ToDoList: React.FC = () => {
-  
-    const [todos, setTodos] = useState<{ id: number; text: string; completed: boolean; favorite: boolean }[]>([]);
-    const [inputValue, setInputValue] = useState('');
-    const [filterType, setFilterType] = useState<'all' | 'completed' | 'uncompleted' | 'favorite'>('all');
-  
+  const [todos, setTodos] = useState<{ id: number; text: string; completed: boolean; favorite: boolean }[]>(JSON.parse(sessionStorage.getItem('todos') || '[]'));
+  const [inputValue, setInputValue] = useState('');
+  const [filterType, setFilterType] = useState<'all' | 'completed' | 'uncompleted' | 'favorite'>('all');
 
   useEffect(() => {
-    const storedTodos = localStorage.getItem('todos');
-    if (storedTodos) {
-      setTodos(JSON.parse(storedTodos));
-    }
-  }, []);
+    sessionStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
 
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
-  
-  useEffect(() => {
-    try {
-      localStorage.setItem('todos', JSON.stringify(todos));
-    } catch (error) {
-      console.error('Error saving todos to localStorage:', error);
-    }
-  }, [todos]);
-  
   const handleDeleteTodo = (id: number) => {
     setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
   };
@@ -53,6 +33,7 @@ const ToDoList: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
+
   const handleFavoriteToggle = (id: number) => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) =>
@@ -60,20 +41,22 @@ const ToDoList: React.FC = () => {
       )
     );
   };
-  
+
   const handleAddTodo = () => {
     if (inputValue.trim() !== '') {
       setTodos((prevTodos) => [
-        ...prevTodos, // Добавление нового дела в конец массива
+        ...prevTodos,
         {
-          id: prevTodos.length > 0 ? prevTodos[prevTodos.length-1].id + 1 : 1, // Генерация уникального id
+          id: prevTodos.length > 0 ? prevTodos[prevTodos.length - 1].id + 1 : 1,
           text: inputValue,
           completed: false,
-        },
+          favorite: false,
+        }
       ]);
       setInputValue('');
     }
   };
+
   const handleTodoToggle = (id: number) => {
     setTodos(
       todos.map((todo) =>
@@ -81,6 +64,7 @@ const ToDoList: React.FC = () => {
       )
     );
   };
+
   const getFilteredTodos = () => {
     switch (filterType) {
       case 'completed':
@@ -93,8 +77,9 @@ const ToDoList: React.FC = () => {
         return todos;
     }
   };
-  
+
   const filteredTodos = getFilteredTodos();
+
   return (
     <CenteredContainer>
       <h1>My To-Do List</h1>
@@ -123,4 +108,5 @@ const ToDoList: React.FC = () => {
     </CenteredContainer>
   );
 };
+
 export default ToDoList;
